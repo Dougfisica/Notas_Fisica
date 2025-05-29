@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Nota Final</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: #fff;
+            padding: 36px 32px 28px 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            max-width: 390px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            color: #5a189a;
+            font-weight: 700;
+        }
+        fieldset {
+            border: none;
+            margin-bottom: 18px;
+            padding: 0;
+        }
+        legend {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #7b2ff2;
+            font-size: 1.06em;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        label {
+            flex: 1;
+            font-size: 1em;
+        }
+        input[type="number"] {
+            width: 70px;
+            padding: 6px 6px;
+            font-size: 1.08em;
+            border: 1.2px solid #a0aec0;
+            border-radius: 8px;
+            background: #f3f0fa;
+            outline: none;
+            transition: border 0.2s;
+        }
+        input[type="number"]:focus {
+            border: 1.5px solid #7b2ff2;
+            background: #f5f5fc;
+        }
+        .resultado {
+            margin-top: 22px;
+            padding: 16px 10px;
+            background: #f5f0ff;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.22em;
+            font-weight: 500;
+            min-height: 46px;
+            color: #333;
+            letter-spacing: 0.5px;
+        }
+        .aprovado {
+            color: #198754;
+            font-weight: bold;
+            font-size: 1.14em;
+            margin-top: 8px;
+        }
+        @media (max-width: 500px) {
+            .card { padding: 20px 7vw 16px 7vw; }
+            h2 { font-size: 1.25em; }
+            .resultado { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Calculadora de Nota Final</h2>
+        <form id="formNotas" autocomplete="off">
+            <fieldset>
+                <legend>Notas das Gravações</legend>
+                <div class="input-group"><label>Gravação 1</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Gravação 2</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Gravação 3</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Gravação 4</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Gravação 5</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Gravação 6</label><input type="number" min="0" max="10" step="0.1"></div>
+            </fieldset>
+            <fieldset>
+                <legend>Notas das Provas</legend>
+                <div class="input-group"><label>Prova 1</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Prova 2</label><input type="number" min="0" max="10" step="0.1"></div>
+                <div class="input-group"><label>Prova 3</label><input type="number" min="0" max="10" step="0.1"></div>
+            </fieldset>
+        </form>
+        <div class="resultado" id="resultado"></div>
+    </div>
+    <script>
+        const form = document.getElementById('formNotas');
+        const inputs = form.querySelectorAll('input[type="number"]');
+        const resultado = document.getElementById('resultado');
+
+        function calcularNotaFinal() {
+            let gravacoes = [];
+            let provas = [];
+
+            // Pega o valor, ou 0 se estiver vazio ou inválido
+            for (let i = 0; i < 6; i++) {
+                let val = parseFloat(inputs[i].value.replace(",", "."));
+                if (isNaN(val) || val < 0 || val > 10) val = 0;
+                gravacoes.push(val);
+            }
+            for (let i = 6; i < 9; i++) {
+                let val = parseFloat(inputs[i].value.replace(",", "."));
+                if (isNaN(val) || val < 0 || val > 10) val = 0;
+                provas.push(val);
+            }
+
+            // Cálculos
+            const mediaGrav = gravacoes.reduce((a, b) => a + b, 0) / 6;
+            const mediaProvas = provas.reduce((a, b) => a + b, 0) / 3;
+            const notaFinal = mediaGrav * 0.2 + mediaProvas * 0.8;
+
+            // Exibe resultado
+            let html = `Nota final: <strong>${notaFinal.toFixed(2)}</strong>`;
+            if (notaFinal >= 7) {
+                html += `<div class="aprovado">Aprovado!</div>`;
+            }
+            resultado.innerHTML = html;
+        }
+
+        // Recalcula automaticamente ao digitar e ao abrir a página
+        inputs.forEach(input => {
+            input.addEventListener('input', calcularNotaFinal);
+        });
+        calcularNotaFinal();
+
+        // Evita submit
+        form.addEventListener('submit', e => e.preventDefault());
+    </script>
+</body>
+</html>
